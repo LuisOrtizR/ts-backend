@@ -19,9 +19,6 @@ const COUNTRIES: string[] = [
   'NG', 'ZA', 'EG', 'KE', 'MA', 'GH'
 ]
 
-/**
- * Calendarific API - Mapping function
- */
 function mapCalendarificToHoliday(item: any, countryCode: string): Holiday {
   return {
     date: item.date.iso.split('T')[0],
