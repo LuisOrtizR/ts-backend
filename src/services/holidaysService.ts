@@ -3,19 +3,14 @@ import Holidays from 'date-holidays'
 import { Holiday, HolidaysResponse } from '../types'
 
 const COUNTRIES: string[] = [
-  // Américas (19)
   'US', 'MX', 'CO', 'BR', 'AR', 'CA', 'CL', 'PE', 'VE', 'EC', 
   'PA', 'CR', 'DO', 'GT', 'PR', 'UY', 'PY', 'BO', 'SV',
-  // Europa (22)
   'GB', 'DE', 'FR', 'ES', 'NL', 'IT', 'PT', 'BE', 'CH', 'AT', 
   'SE', 'NO', 'FI', 'DK', 'PL', 'GR', 'CZ', 'HU', 'IE', 'RO', 
   'RU', 'UA', 'TR',
-  // Asia & Medio Oriente (17)
   'SG', 'IN', 'CN', 'JP', 'KR', 'TH', 'VN', 'PH', 'MY', 'ID', 
   'AE', 'SA', 'IL', 'PK', 'BD', 'TW', 'HK',
-  // Oceanía (2)
   'AU', 'NZ',
-  // África (6)
   'NG', 'ZA', 'EG', 'KE', 'MA', 'GH'
 ]
 
@@ -32,9 +27,6 @@ function mapCalendarificToHoliday(item: any, countryCode: string): Holiday {
   }
 }
 
-/**
- * date-holidays library - Mapping function
- */
 function mapLibraryToHoliday(item: any, countryCode: string): Holiday {
   return {
     date: item.date.split(' ')[0],
@@ -48,14 +40,10 @@ function mapLibraryToHoliday(item: any, countryCode: string): Holiday {
   }
 }
 
-/**
- * Fetch holidays using a combination of Library (fast), API (Calendarific) and URL (Nager.Date)
- */
 async function fetchHolidaysForYear(year: number): Promise<Holiday[]> {
   const API_KEY = process.env.CALENDARIFIC_API_KEY
   const isCalendarific = API_KEY && API_KEY !== 'tu_key_aqui'
 
-  // 1. Initial source: Library (date-holidays) - Local and very fast
   const holidaysFromLibrary: Holiday[] = []
   const countriesToFetchRemotely: string[] = []
 
@@ -73,7 +61,6 @@ async function fetchHolidaysForYear(year: number): Promise<Holiday[]> {
     }
   })
 
-  // 2. Secondary source: Remote APIs (Calendarific or Nager.Date) for missing or more detailed data
   const results = await Promise.allSettled(
     countriesToFetchRemotely.map((country) => {
       if (isCalendarific) {
@@ -97,10 +84,7 @@ async function fetchHolidaysForYear(year: number): Promise<Holiday[]> {
     .filter((r): r is PromiseFulfilledResult<Holiday[]> => r.status === 'fulfilled')
     .flatMap((r) => r.value)
 
-  // Merge results, removing duplicates (if any)
   const allHolidays = [...holidaysFromLibrary, ...remoteHolidays]
-  
-  // Use a map to deduplicate by date + name + country
   const uniqueHolidays = new Map<string, Holiday>()
   allHolidays.forEach(h => {
     const key = `${h.date}-${h.name}-${h.countryCode}`

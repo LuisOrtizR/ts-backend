@@ -1,4 +1,3 @@
-// ─── Weather ──────────────────────────────────────────────
 export interface WeatherAlert {
   type: 'temperature' | 'wind' | 'storm' | 'snow'
   msg: string
@@ -24,7 +23,6 @@ export interface City {
   lon: number
 }
 
-// ─── Holidays ─────────────────────────────────────────────
 export interface Holiday {
   date: string
   localName: string
@@ -47,7 +45,6 @@ export interface HolidaysResponse {
   fetched_at: string
 }
 
-// ─── Market ───────────────────────────────────────────────
 export interface StockQuote {
   symbol: string
   name: string
@@ -78,7 +75,6 @@ export interface MarketData {
   fetched_at: string
 }
 
-// ─── API Responses ────────────────────────────────────────
 export interface ApiResponse<T> {
   source: 'cache' | 'live'
   data: T

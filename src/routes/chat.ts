@@ -14,7 +14,6 @@ router.post('/', async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Faltan mensajes en la petición.' });
   }
 
-  // Intentar obtener datos del caché, si no existen, forzar una petición rápida
   let weather = cache.get('weather:all');
   if (!weather) {
     weather = await fetchWeatherAll().catch(() => null);
