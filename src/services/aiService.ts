@@ -6,7 +6,15 @@ export async function getAiResponse(messages: any[], lang: string = 'español', 
   const API_KEY = process.env.GROQ_API_KEY;
 
   if (!API_KEY) {
+    console.error('❌ Error: GROQ_API_KEY no encontrada en process.env');
     throw new Error('GROQ_API_KEY no está configurada en el servidor.');
+  }
+
+  // Log para verificar si la key tiene un formato básico correcto (sin mostrarla completa)
+  if (API_KEY.length < 10) {
+    console.error('❌ Error: GROQ_API_KEY parece ser demasiado corta o inválida');
+  } else {
+    console.log(`📡 Usando GROQ_API_KEY (inicia con: ${API_KEY.substring(0, 6)}...)`);
   }
 
   let liveContext = '';

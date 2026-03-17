@@ -10,7 +10,32 @@ import chatRoutes     from './routes/chat'
 const app  = express()
 const PORT = process.env.PORT ?? 3000
 
-app.use(cors())
+// Configurar CORS dinámico para permitir localhost y el dominio de producción
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:4173',
+  'https://luis-ortiz-portfolio.vercel.app',
+  process.env.FRONTEND_URL 
+].filter(Boolean) as string[];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    
+    // Normalizar el origen eliminando la barra final si existe
+    const normalizedOrigin = origin.endsWith('/') ? origin.slice(0, -1) : origin;
+    
+    if (allowedOrigins.some(allowed => allowed && (allowed === normalizedOrigin || allowed === origin))) {
+      callback(null, true);
+    } else {
+      console.warn(`CORS blocked request from origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}))
+
 app.use(express.json())
 
 app.use('/api/weather',  weatherRoutes)
